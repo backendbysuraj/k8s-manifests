@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  namespace: argocd
+data:
+  policy.default: role:readonly
+  policy.csv: |
+    # Admins can do everything
+    p, role:admin, applications, *, */*, allow
+    p, role:admin, clusters, *, *, allow
+    p, role:admin, repositories, *, *, allow
+    p, role:admin, projects, *, *, allow
+
+    # Developers can sync and view their namespace apps
+    p, role:developer, applications, get, default/*, allow
+    p, role:developer, applications, sync, default/*, allow
+
+    # Map GitHub teams to roles
+    g, my-org:platform-team, role:admin
+    g, my-org:developers, role:developer
